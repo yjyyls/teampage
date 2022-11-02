@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+
+    <title>소개 페이지</title>
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Do Hyeon', sans-serif;
+        }
+
+        .main {
+            background-color: bisque;
+
+
+            width: 100%;
+            height: 200px;
+
+            color: navy;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mylist {
+            margin-top: 20px;
+            margin-left: 20px;
+
+            font-size: 30px;
+
+        }
+
+        .content {
+            margin-top: 30px;
+            margin-right: 100px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        a {
+            color: black;
+            text-decoration-line: none;
+        }
+
+        a:hover {
+            color: red;
+        }
+
+        #grid {
+            display: grid;
+            grid-template-columns: 800px 800px;
+            grid-template-rows: 500px;
+        }
+
+        .photo {
+            margin-top: 30px;
+            margin-left: 50px;
+            border-radius: 30px;
+        }
+
+        .mypost {
+            margin: 120px 30px auto 50px;
+
+            box-shadow: 0px 0px 3px 0px black;
+            padding: 20px;
+        }
+        .mypost > button {
+            margin-top: 15px;
+        }
+        .mycards{
+            margin: 20px 30px 100px 50px;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            show_comment()
+        });
+
+        function save_comment() {
+            let name = $('#name').val()
+            let comment = $('#comment').val()
+
+            $.ajax({
+                type: 'POST',
+                url: '/teampage',
+                data: {'name_give':name, 'comment_give':comment},
+                success: function (response) {
+                    alert(response['msg'])
+                    window.location.reload()
+                }
+            })
+        }
+
+        function show_comment() {
+            $.ajax({
+                type: "GET",
+                url: "/teampage",
+                data: {},
+                success: function (response) {
+                    let rows = response['comment']
+                    for (let i = 0; i < rows.length; i++) {
+                        let name = rows[i]['name']
+                        let comment = rows[i]['comment']
+
+                        let temp_html = `<div class="card">
+                                            <div class="card-body">
+                                                <blockquote class="blockquote mb-0">
+                                                    <p>${comment}</p>
+                                                    <footer class="blockquote-footer">${name}</footer>
+                                                </blockquote>
+                                            </div>
+                                        </div>`
+                        $('#comment-list').append(temp_html)
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="main">
+        <h1 style="font-size: 80px">팀원을 소개합니다</h1>
+    </div>
+    <div id="grid" class="intro">
+        <div class="myimg">
+            <img id="img-myphoto" class="photo" src="myphoto.jpg" width="400">
+        </div>
+        <div class="content">
+            <h2 style="font-size: 60px; color:navy;">한지은</h2>
+            <nav>
+                <ul class="mylist">
+                    <li>MBTI : ISFJ</li></br>
+                    <li>장점 : 시간약속 잘 지킴, 배려깊음</li></br>
+                    <li>스타일 : 협업할 때 나의 스타일은 다른 사람 의견을 잘 경청하고 시키는대로 하는 스타일</li></br>
+                    <li><a href="https://yjyyls6.tistory.com/" target="_blank">BLOG</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div class="mypost">
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="name" placeholder="url">
+            <label for="floatingInput">이름</label>
+        </div>
+        <div class="form-floating">
+        <textarea class="form-control" placeholder="Leave a comment here" id="comment"
+                  style="height: 100px"></textarea>
+            <label for="floatingTextarea2">방명록</label>
+        </div>
+        <button onclick="save_comment()" type="button" class="btn btn-dark">방명록 남기기</button>
+    </div>
+    <div class="mycards" id="comment-list">
+    </div>
+</body>
+</html>
